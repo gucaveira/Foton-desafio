@@ -1,0 +1,18 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+java {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+}
+
+dependencies {
+
+    //Paging3 Common
+    implementation "androidx.paging:paging-common-ktx:$paging_version"
+
+    //Coroutines cores
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
+}
