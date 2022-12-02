@@ -6,6 +6,7 @@ buildscript {
     ext.detekt_version = '1.18.0'
     ext.paging_version = "3.1.1"
     ext.coroutines_version = "1.6.4"
+    ext.lifecycle_version = "2.5.1"
 
     repositories {
         google()
