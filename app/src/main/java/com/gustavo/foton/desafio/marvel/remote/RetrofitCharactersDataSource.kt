@@ -4,8 +4,9 @@ import com.gustavo.foton.desafio.core.data.repository.CharactersRemoteDataSource
 import com.gustavo.foton.desafio.core.domain.model.CharacterPaging
 import com.gustavo.foton.desafio.marvel.framework.network.MarvelApi
 import com.gustavo.foton.desafio.marvel.framework.network.response.toCharacterModel
+import javax.inject.Inject
 
-class RetrofitCharactersRemoteDataSource(
+class RetrofitCharactersDataSource @Inject constructor(
     private val marvelApi: MarvelApi
 ) : CharactersRemoteDataSource {
 

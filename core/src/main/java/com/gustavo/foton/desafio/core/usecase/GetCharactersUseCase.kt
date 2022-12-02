@@ -7,6 +7,7 @@ import com.gustavo.foton.desafio.core.data.repository.CharactersRepository
 import com.gustavo.foton.desafio.core.domain.model.Character
 import com.gustavo.foton.desafio.core.usecase.GetCharactersUseCase.GetCharactersParams
 import com.gustavo.foton.desafio.core.usecase.base.PagingUseCase
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 interface GetCharactersUseCase {
@@ -15,7 +16,7 @@ interface GetCharactersUseCase {
     data class GetCharactersParams(val query: String, val pagingConfig: PagingConfig)
 }
 
-class GetCharactersParamsImpl(
+class GetCharactersUseCaseImpl @Inject constructor(
     private val charactersRepository: CharactersRepository
 ) : PagingUseCase<GetCharactersParams, Character>(), GetCharactersUseCase {
 
