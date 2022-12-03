@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.gustavo.foton.desafio.marvel.R
 import com.gustavo.foton.desafio.marvel.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,16 +26,15 @@ class MainActivity : AppCompatActivity() {
 
         navController = navHostFragment.navController
         appBarController = AppBarConfiguration(
-            setOf()
-            /*setOf(
-                //R.id.charactersFragment,
-               // R.id.favoritesFragment,
-               // R.id.aboutFragment,
-               // R.id.sortFragment
-            )*/
+            setOf(
+                R.id.charactersFragment,
+                // R.id.favoritesFragment,
+                // R.id.aboutFragment,
+                // R.id.sortFragment
+            )
         )
 
-        setupActionBarWithNavController(navController, appBarController)
-        //binding.bottomNaviMain.setupWithNavController(navController, appBarController)
+        binding.bottomNaviMain.setupWithNavController(navController)
+        binding.toolbarApp.setupWithNavController(navController, appBarController)
     }
 }
