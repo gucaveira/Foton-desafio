@@ -7,8 +7,9 @@ import com.gustavo.foton.desafio.core.domain.model.Character
 import com.gustavo.foton.desafio.marvel.framework.paging.CharactersPagingSource
 import javax.inject.Inject
 
-class CharactersRepositoryImpl @Inject constructor(private val remoteDataSource: CharactersRemoteDataSource) :
-    CharactersRepository {
+class CharactersRepositoryImpl @Inject constructor(
+    private val remoteDataSource: CharactersRemoteDataSource
+) : CharactersRepository {
     override fun getCharacters(query: String): PagingSource<Int, Character> {
         return CharactersPagingSource(remoteDataSource, query)
     }

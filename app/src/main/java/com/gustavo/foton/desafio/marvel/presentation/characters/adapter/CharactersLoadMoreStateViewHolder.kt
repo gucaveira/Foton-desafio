@@ -1,0 +1,37 @@
+package com.gustavo.foton.desafio.marvel.presentation.characters.adapter
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView
+import com.gustavo.foton.desafio.marvel.databinding.ItemCharacterLoadMoreStateBinding
+
+class CharactersLoadMoreStateViewHolder private constructor(
+    itemBinding: ItemCharacterLoadMoreStateBinding,
+    retry: () -> Unit
+) : RecyclerView.ViewHolder(itemBinding.root) {
+
+    private var binding = ItemCharacterLoadMoreStateBinding.bind(itemView)
+    private var progressBarLoadingMore = binding.progressLoadingMore
+    private var textTryAgainMessage = binding.textTryAgain.also {
+        it.setOnClickListener {
+            retry()
+        }
+    }
+
+
+    fun bind(loadState: LoadState) {
+        progressBarLoadingMore.isVisible = loadState is LoadState.Loading
+        textTryAgainMessage.isVisible = loadState is LoadState.Error
+    }
+
+    companion object {
+        fun create(parent: ViewGroup, retry: () -> Unit): CharactersLoadMoreStateViewHolder {
+            val itemBinding = ItemCharacterLoadMoreStateBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+            return CharactersLoadMoreStateViewHolder(itemBinding, retry)
+        }
+    }
+}
