@@ -1,6 +1,9 @@
 package com.gustavo.foton.desafio.marvel.framework.di
 
 import com.gustavo.foton.desafio.core.data.repository.FavoritesRepository
+import com.gustavo.foton.desafio.core.repository.FavoritesLocalDataSource
+import com.gustavo.foton.desafio.marvel.framework.FavoritesRepositoryImpl
+import com.gustavo.foton.desafio.marvel.framework.local.RoomFavoritesDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

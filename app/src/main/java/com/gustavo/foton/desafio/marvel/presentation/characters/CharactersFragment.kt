@@ -7,16 +7,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.gustavo.foton.desafio.marvel.databinding.FragmentCharactersBinding
 import com.gustavo.foton.desafio.marvel.framework.imageLoader.ImageLoader
 import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersAdapter
-import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersLoadStateAdapter
+import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersLoadMoreStateAdapter
 import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersRefreshStateAdapter
 import com.gustavo.foton.desafio.marvel.presentation.detail.DetailViewArg
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,13 +63,16 @@ class CharactersFragment : Fragment() {
         initCharactersAdapter()
         observeInitialLoadState()
 
-        lifecycleScope.launch {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.charactersPagingData(query = "").collect { pagingData ->
-                    characterAdapter.submitData(pagingData)
+        viewModel.state.observe(viewLifecycleOwner) { uiState ->
+            when (uiState) {
+                is CharactersViewModel.UiState.SearchResult -> {
+                    lifecycleScope.launch {
+                        characterAdapter.submitData(uiState.data)
+                    }
                 }
             }
         }
+        viewModel.searchCharacters()
     }
 
     private fun initCharactersAdapter() {
@@ -81,7 +82,7 @@ class CharactersFragment : Fragment() {
             setHasFixedSize(true)
             adapter = characterAdapter.withLoadStateHeaderAndFooter(
                 header = headerAdapter,
-                footer = CharactersLoadStateAdapter(characterAdapter::retry)
+                footer = CharactersLoadMoreStateAdapter(characterAdapter::retry)
             )
 
             viewTreeObserver.addOnPreDrawListener {
@@ -100,22 +101,29 @@ class CharactersFragment : Fragment() {
                 } ?: loadState.prepend
 
 
-                binding.flipperCharacters.displayedChild = when (loadState.refresh) {
-                    is LoadState.Loading -> {
+                binding.flipperCharacters.displayedChild = when {
+                    loadState.mediator?.refresh is LoadState.Loading -> {
                         setShimmerVisibility(true)
                         FLIPPER_CHILD_LOADING
                     }
-                    is LoadState.NotLoading -> {
+
+                    loadState.mediator?.refresh is LoadState.Error
+                            && characterAdapter.itemCount == 0 -> {
+                        setShimmerVisibility(false)
+                        binding.includeViewCharactersErrorState.buttonRetry.setOnClickListener {
+                            characterAdapter.retry()
+                        }
+                        FLIPPER_CHILD_ERROR
+                    }
+
+                    loadState.source.refresh is LoadState.NotLoading ||
+                            loadState.mediator?.refresh is LoadState.NotLoading -> {
                         setShimmerVisibility(false)
                         FLIPPER_CHILD_CHARACTERS
                     }
-
-                    is LoadState.Error -> {
+                    else -> {
                         setShimmerVisibility(false)
-                        binding.includeViewCharactersErrorState.buttonRetry.setOnClickListener {
-                            characterAdapter.refresh()
-                        }
-                        FLIPPER_CHILD_ERROR
+                        FLIPPER_CHILD_CHARACTERS
                     }
                 }
             }

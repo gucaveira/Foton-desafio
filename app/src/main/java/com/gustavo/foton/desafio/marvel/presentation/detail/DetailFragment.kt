@@ -115,7 +115,7 @@ class DetailFragment : Fragment() {
     private fun setSharedElementTransitionOnEnter() {
         TransitionInflater.from(requireContext()).inflateTransition(android.R.transition.move)
             .apply {
-                sharedElementEnterTransition = true
+                sharedElementEnterTransition = this
             }
     }
 

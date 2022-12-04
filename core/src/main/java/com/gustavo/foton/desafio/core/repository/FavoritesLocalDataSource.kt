@@ -1,11 +1,12 @@
-package com.gustavo.foton.desafio.core.data.repository
+package com.gustavo.foton.desafio.core.repository
 
 import com.gustavo.foton.desafio.core.domain.model.Character
 import kotlinx.coroutines.flow.Flow
 
-interface FavoritesRepository {
+
+interface FavoritesLocalDataSource {
     fun getAll(): Flow<List<Character>>
     suspend fun isFavorite(characterId: Int): Boolean
-    suspend fun saveFavorite(character: Character)
-    suspend fun deleteFavorite(character: Character)
+    suspend fun save(character: Character)
+    suspend fun delete(character: Character)
 }

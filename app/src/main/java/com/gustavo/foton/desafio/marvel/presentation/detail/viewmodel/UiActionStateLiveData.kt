@@ -19,7 +19,7 @@ class UiActionStateLiveData(
 
     private val action = MutableLiveData<Action>()
 
-    //switchMap faz tranformação de dados
+
     val state: LiveData<UiState> = action.switchMap {
         liveData(coroutineContext) {
             when (it) {

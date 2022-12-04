@@ -1,0 +1,30 @@
+package com.gustavo.foton.desafio.marvel.framework.di
+
+import android.content.Context
+import androidx.room.Room
+import com.gustavo.foton.desafio.core.data.DbConstants.APP_DATABASE_NAME
+import com.gustavo.foton.desafio.marvel.framework.db.AppDatabase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+
+@Module
+@InstallIn(SingletonComponent::class)
+object DatabaseModule {
+
+    @Provides
+    fun providesAppDatabase(@ApplicationContext context: Context) = Room
+        .databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            APP_DATABASE_NAME
+        ).build()
+
+    @Provides
+    fun provideFavoriteDao(appDatabase: AppDatabase) = appDatabase.favoriteDao()
+
+    @Provides
+    fun provideCharacterDao(appDatabase: AppDatabase) = appDatabase.characterDao()
+}

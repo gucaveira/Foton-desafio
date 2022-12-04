@@ -1,4 +1,4 @@
-package com.gustavo.foton.desafio.marvel.presentation.aboutFragment
+package com.gustavo.foton.desafio.marvel.presentation.about
 
 import android.os.Bundle
 import android.view.LayoutInflater
