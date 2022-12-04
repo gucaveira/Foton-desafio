@@ -29,9 +29,8 @@ class MainActivity : AppCompatActivity() {
         appBarController = AppBarConfiguration(
             setOf(
                 R.id.charactersFragment,
-                // R.id.favoritesFragment,
-                // R.id.aboutFragment,
-                // R.id.sortFragment
+                R.id.favoritesFragment,
+                R.id.aboutFragment
             )
         )
 
