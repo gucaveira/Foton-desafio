@@ -1,6 +1,5 @@
 package com.gustavo.foton.desafio.core.usecase
 
-import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.gustavo.foton.desafio.core.data.repository.CharactersRepository
@@ -21,9 +20,7 @@ class GetCharactersUseCaseImpl @Inject constructor(
 ) : PagingUseCase<GetCharactersParams, Character>(), GetCharactersUseCase {
 
     override fun createFlowObservable(params: GetCharactersParams): Flow<PagingData<Character>> {
-        return Pager(config = params.pagingConfig) {
-            charactersRepository.getCharacters(params.query)
-        }.flow
+        return charactersRepository.getCachedCharacters(params.query, params.pagingConfig)
     }
 
 }
