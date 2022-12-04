@@ -1,5 +1,6 @@
 package com.gustavo.foton.desafio.core.usecase.base
 
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -10,4 +11,4 @@ interface CoroutinesDispatchers {
     fun unconfined(): CoroutineDispatcher = Dispatchers.Unconfined
 }
 
-class AppCoroutinesDispatchers : CoroutinesDispatchers
+class AppCoroutinesDispatchers @Inject constructor() : CoroutinesDispatchers

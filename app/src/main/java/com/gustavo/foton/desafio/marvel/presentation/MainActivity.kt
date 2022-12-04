@@ -16,13 +16,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarController: AppBarConfiguration
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.navHostContainer) as NavHostFragment
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.navHostContainer) as NavHostFragment
 
         navController = navHostFragment.navController
         appBarController = AppBarConfiguration(
@@ -36,5 +37,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNaviMain.setupWithNavController(navController)
         binding.toolbarApp.setupWithNavController(navController, appBarController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            val isTopLevelDestination =
+                appBarController.topLevelDestinations.contains(destination.id)
+            if (isTopLevelDestination.not()) {
+                binding.toolbarApp.setNavigationIcon(R.drawable.ic_back)
+            }
+        }
     }
 }

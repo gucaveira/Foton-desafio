@@ -5,13 +5,17 @@ import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.gustavo.foton.desafio.marvel.databinding.FragmentDetailBinding
 import com.gustavo.foton.desafio.marvel.framework.imageLoader.ImageLoader
+import com.gustavo.foton.desafio.marvel.presentation.detail.adapter.DetailParentAdapter
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class DetailFragment : Fragment() {
 
     private val viewModel: DetailViewModel by viewModels()
@@ -40,6 +44,40 @@ class DetailFragment : Fragment() {
         }
 
         setSharedElementTransitionOnEnter()
+        setObserve(detailViewArg)
+
+        viewModel.getCharacterCategories(detailViewArg.characterId)
+    }
+
+    private fun setObserve(detailViewArg: DetailViewArg) {
+        viewModel.uiState.observe(viewLifecycleOwner) { uiState ->
+            binding.flipperDetail.displayedChild = when (uiState) {
+                DetailViewModel.UiState.Loading -> {
+                    setShimmerVisibility(true)
+                    FLIPPER_CHILD_POSITION_LOADING
+                }
+                is DetailViewModel.UiState.Success -> {
+                    setRecyclerView(uiState)
+                    setShimmerVisibility(false)
+                    FLIPPER_CHILD_POSITION_DETAIL
+                }
+                is DetailViewModel.UiState.Error -> {
+                    binding.includeErrorView.buttonRetry.setOnClickListener {
+                        viewModel.getCharacterCategories(detailViewArg.characterId)
+                    }
+                    setShimmerVisibility(false)
+                    FLIPPER_CHILD_POSITION_ERROR
+                }
+                DetailViewModel.UiState.Empty -> FLIPPER_CHILD_POSITION_EMPTY
+            }
+        }
+    }
+
+    private fun setRecyclerView(uiState: DetailViewModel.UiState.Success) {
+        binding.RecyclerParentDetail.run {
+            setHasFixedSize(true)
+            adapter = DetailParentAdapter(uiState.detailParentList, imageLoader)
+        }
     }
 
     private fun setSharedElementTransitionOnEnter() {
@@ -47,6 +85,15 @@ class DetailFragment : Fragment() {
             .apply {
                 sharedElementEnterTransition = true
             }
+    }
+
+    private fun setShimmerVisibility(visibility: Boolean) {
+        binding.includeLoadingState.shimmerData.run {
+            isVisible = visibility
+            if (visibility) {
+                startShimmer()
+            } else stopShimmer()
+        }
     }
 
     override fun onDestroyView() {

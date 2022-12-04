@@ -1,5 +1,7 @@
 package com.gustavo.foton.desafio.marvel.framework.di
 
+import com.gustavo.foton.desafio.core.usecase.GetCharacterCategoriesUseCase
+import com.gustavo.foton.desafio.core.usecase.GetCharacterCategoriesUseCaseImpl
 import com.gustavo.foton.desafio.core.usecase.GetCharactersUseCase
 import com.gustavo.foton.desafio.core.usecase.GetCharactersUseCaseImpl
 import dagger.Binds
@@ -13,4 +15,7 @@ interface UseCaseModule {
 
     @Binds
     fun bindGetCharactersUseCase(useCase: GetCharactersUseCaseImpl): GetCharactersUseCase
+
+    @Binds
+    fun bindGetComicsUseCase(useCase: GetCharacterCategoriesUseCaseImpl): GetCharacterCategoriesUseCase
 }

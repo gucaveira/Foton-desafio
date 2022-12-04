@@ -10,11 +10,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import com.gustavo.foton.desafio.marvel.databinding.FragmentCharactersBinding
 import com.gustavo.foton.desafio.marvel.framework.imageLoader.ImageLoader
 import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersAdapter
 import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersLoadStateAdapter
+import com.gustavo.foton.desafio.marvel.presentation.characters.adapter.CharactersRefreshStateAdapter
+import com.gustavo.foton.desafio.marvel.presentation.detail.DetailViewArg
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.launch
@@ -30,16 +34,22 @@ class CharactersFragment : Fragment() {
     @Inject
     lateinit var imageLoader: ImageLoader
 
+    private val headerAdapter: CharactersRefreshStateAdapter by lazy {
+        CharactersRefreshStateAdapter(
+            characterAdapter::retry
+        )
+    }
+
     private val characterAdapter: CharactersAdapter by lazy {
         CharactersAdapter(imageLoader) { character, view ->
-            /* val extras = FragmentNavigatorExtras(view to character.name)
+            val extras = FragmentNavigatorExtras(view to character.name)
 
 
-             val directions = CharactersFragmentDirections.actionCharactersFragmentToDetailFragment(
-                 character.name, DetailViewArg(character.id, character.name, character.imageUrl)
-             )
+            val directions = CharactersFragmentDirections.actionCharactersFragmentToDetailFragment(
+                character.name, DetailViewArg(character.id, character.name, character.imageUrl)
+            )
 
-             findNavController().navigate(directions, extras)*/
+            findNavController().navigate(directions, extras)
         }
     }
 
@@ -66,16 +76,30 @@ class CharactersFragment : Fragment() {
 
     private fun initCharactersAdapter() {
         binding.recyclerCharacters.run {
+            postponeEnterTransition()
+
             setHasFixedSize(true)
-            adapter = characterAdapter.withLoadStateFooter(
+            adapter = characterAdapter.withLoadStateHeaderAndFooter(
+                header = headerAdapter,
                 footer = CharactersLoadStateAdapter(characterAdapter::retry)
             )
+
+            viewTreeObserver.addOnPreDrawListener {
+                startPostponedEnterTransition()
+                true
+            }
         }
     }
 
     private fun observeInitialLoadState() {
         lifecycleScope.launch {
             characterAdapter.loadStateFlow.collect { loadState ->
+
+                headerAdapter.loadState = loadState.mediator?.refresh?.takeIf {
+                    it is LoadState.Error && characterAdapter.itemCount > 0
+                } ?: loadState.prepend
+
+
                 binding.flipperCharacters.displayedChild = when (loadState.refresh) {
                     is LoadState.Loading -> {
                         setShimmerVisibility(true)
