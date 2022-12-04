@@ -1,3 +1,4 @@
 rootProject.name = "Foton desafio marvel"
 include ':app'
 include ':core'
+include ':testing'

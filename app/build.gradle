@@ -24,11 +24,17 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.gustavo.foton.desafio.marvel.CustomTestRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
 
         buildConfigField "String", "PUBLIC_KEY", apikeyProperties['PUBLIC_KEY']
         buildConfigField "String", "PRIVATE_KEY", apikeyProperties['PRIVATE_KEY']
         buildConfigField "String", "BASE_URL", '"https://gateway.marvel.com/v1/public/"'
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        animationsDisabled = true
     }
 
     buildTypes {
@@ -95,7 +101,27 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
 
-    testImplementation 'junit:junit:4.13.2'
+    // Unit tests
+    testImplementation project(":testing")
+    testImplementation "androidx.room:room-testing:$room_version"
+
+    // Instrumentation tests
+    def espresso_version = '3.4.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$espresso_version"
+
+    //orchestrator
+    androidTestImplementation "androidx.test:runner:1.5.1"
+    androidTestUtil "androidx.test:orchestrator:1.4.2"
+
+    def fragment_version = '1.5.2'
+    debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
+
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    androidTestImplementation "com.squareup.okhttp3:mockwebserver:4.9.3"
+
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutines_version"
 }
