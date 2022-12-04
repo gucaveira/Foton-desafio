@@ -10,6 +10,9 @@ buildscript {
     ext.nav_version = "2.5.3"
     ext.glide_version = "4.13.2"
     ext.room_version = "2.4.3"
+    ext.retrofit_version = "2.9.0"
+    ext.okhttp_version = "4.9.0"
+    ext.gson_version = "2.9.1"
 
     repositories {
         google()
