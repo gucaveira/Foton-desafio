@@ -30,4 +30,7 @@ dependencies {
 
     //Gson
     api "com.google.code.gson:gson:$gson_version"
+
+    //test unit
+    testImplementation project(":testing")
 }
